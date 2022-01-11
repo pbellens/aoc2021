@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 
 fn neighbors(coord: (i32, i32), nrows: i32, ncols: i32) -> Vec<(usize, usize)> {
-    vec![(0,1), (1,0), (-1, 0), (0, -1)]
+    vec![(0, 1), (1, 0), (-1, 0), (0,-1)]
         .iter()
         .map(|(x,y)| (coord.0 + x, coord.1 + y))
         .filter(|(x, y)| *x >= 0 && *y >= 0 && *x < nrows && *y < ncols)
