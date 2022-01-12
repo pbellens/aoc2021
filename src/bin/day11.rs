@@ -55,7 +55,25 @@ fn main() -> Result<()> {
                     })
         });
         
-    println!("{}", res);
+    println!("Solution part 1: {}", res);
+
+    let mut squids = include_str!("../../data/day11.input")
+        .lines()
+        .flat_map(|l| l.chars().map(|c| c.to_digit(10).unwrap()).collect_vec())
+        .collect_vec();
+
+    let res = (1..).find(|_it| {
+        squids.iter_mut().for_each(|s| { *s += 1; } ); 
+        (0..M)
+            .flat_map(move |x| (0..N).map(move |y| (x,y)))
+            .fold(
+                0,
+                |acc, (x, y)| { 
+                    acc + (squids[x * N + y] > 9).then(|| flash(&mut squids, x, y, M, N)).unwrap_or(0)
+                }) == M * N
+        });
+
+    println!("Solution part 2: {}", res.unwrap());
 
     Ok(())
 }

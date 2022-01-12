@@ -90,7 +90,6 @@ fn main() -> Result<()> {
         .sorted()
         .collect_vec();
 
-        println!("found {}", sortscores.len());
         println!("Solution part 2: {:?}", sortscores[sortscores.len()/2]);
 
 
