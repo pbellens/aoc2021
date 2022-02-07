@@ -1,4 +1,4 @@
-
+#![feature(int_roundings)]
 use anyhow::Result;
 use std::collections::HashMap;
 
@@ -16,6 +16,8 @@ fn main() -> Result<()> {
             ((left[0], left[1]), right[0]) })
         .collect();
 
+    //println!("orig templ {:?}", templ);
+
     let templ = templ
         .as_bytes()
         .windows(2)
@@ -26,22 +28,36 @@ fn main() -> Result<()> {
                 let e = m.entry(p).or_insert(0);
                 *e += 1;
                 m});
-    let bla = (0..40)
+
+    let (min, max) = (0..40)
         .fold(
             templ,
             |acc, _| acc.iter()
                 .fold(
-                    acc.clone(),
+                    HashMap::new(),
                     |mut m, (&k, &v)| {
                         let n = rules[&k];
-                        let l = m.entry((k.0, n)).or_insert(0);
-                        *l += 1;
-                        let r = m.entry((k.1, n)).or_insert(0);
-                        *r += 1;
-                        m }));
+                        let l = m.entry((k.0, n)).or_insert(0_usize);
+                        *l += v;
+                        let r = m.entry((n, k.1)).or_insert(0_usize);
+                        *r += v;
+                        m }))
+        .iter()
+        .fold(
+            HashMap::new(),
+            |mut acc, (&(l, r), c)| {
+                let lx = acc.entry(l).or_insert(0_usize);
+                *lx += c;
+                let rx = acc.entry(r).or_insert(0_usize);
+                *rx += c;
+                acc})
+        .iter()
+        .map(|(_, &c)| usize::unstable_div_ceil(c, 2))
+        .fold(
+            (usize::MAX, usize::MIN),
+            |acc, c| (if acc.0 < c { acc.0 } else { c }, if acc.1 > c { acc.1 } else { c }));
 
-    println!("{:?}", bla);
-
+    println!("Solution day 14 part 2: {:?}", max - min);
  
     return Ok(())
 }
